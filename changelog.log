@@ -1,0 +1,18 @@
+          CHANGES TO CLASS v2.7          
+-----------------------------------------
+* this file lists all changes on order to incorporate DM-neutrino scattering
+  into CLASS
+
+1. 'thermodynamics.h'
+----------------------------------------
+* in struct thermo
+  line 154: double u_nuDM
+	 -> add the coupling strength as a new parameter, the mass is normalized to 100 GeV
+  line 156: short has_coupling_nuDM
+	 -> flag to indicate weather the new coupling should be taken into account
+  line 178: int index_th_dmu_nuDM
+	 -> index for the DM-neutrino scattering rate
+
+2. 'input.c'
+----------------------------------------
+* in function input_read_parameters

@@ -1293,6 +1293,11 @@ int input_read_parameters(
       }
     }
   }
+  /** parameters for DM-nu scattering */
+  class_read_double("u_nuDM", pth->u_nuDM);
+  if (pth->u_nuDM>0.)
+    pth->has_coupling_nuDM = _TRUE_;
+  
 
   /** (c) define which perturbations and sources should be computed, and down to which scale */
 
@@ -3017,6 +3022,9 @@ int input_default_params(
   pth->compute_cb2_derivatives=_FALSE_;
 
   pth->compute_damping_scale = _FALSE_;
+
+  pth->u_nuDM=0.;
+  pth->has_coupling_nuDM=_FALSE_;
 
   /** - perturbation structure */
 
