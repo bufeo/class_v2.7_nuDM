@@ -152,6 +152,12 @@ int thermodynamics_at_z(
     pvecthermo[pth->index_th_dg]=0.;
     pvecthermo[pth->index_th_ddg]=0.;
 
+    /* calculate the rate for DM-neutrino scattering */
+    /* dmu_nuDM = 3/(8*Pi*G)*sigma_th/10^11eV*c^4/Mpc_over_m*(1+z)^2*u_nuDM*Omega_DM*H_0^2 */
+    /* actually this expression is exact */
+    if (pth->has_coupling_nuDM==_TRUE_)
+      pvecthermo[pth->index_th_dmu_nuDM] = (1.+z)*(1.+z)*pth->u_nuDM*3.*pba->H0*pba->H0/8./_PI_/_G_*pba->Omega0_cdm*pow(_c_,4)*_sigma_/1.e11/_eV_/_Mpc_over_m_; 
+
     /* Calculate Tb */
     pvecthermo[pth->index_th_Tb] = pba->T_cmb*(1.+z);
 
@@ -611,6 +617,13 @@ int thermodynamics_init(
                                                       pth->error_message),
                pth->error_message,
                pth->error_message);
+  }
+
+  /* compute dmu_nuDM */
+  if(pth->has_coupling_nuDM==_TRUE_){
+    for (index_tau=0; index_tau < pth->tt_size; index_tau++) {
+      pth->thermodynamics_table[index_tau*pth->th_size+pth->index_th_dmu_nDM] = 3./8./_PI_/_G_*(pth->z_table[index_tau]+1.)*(pth->z_table[index_tau]+1.)*pba->Omega0_cdm*pba->H0*pba->H0*pth->u_nuDM*pow(_c_,4)*_sigma_/1.e11/_eV_/_Mpc_over_m_;
+    }
   }
 
   free(tau_table);
