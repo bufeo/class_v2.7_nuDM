@@ -51,6 +51,7 @@
   -> the following commands are executed only if pth->has_coupling_nuDM is TRUE
   line 6983: S_nuDM = 4./3. *pvecback[pba->index_bg_rho_ur]/pvecback[pba->index_bg_rho_cdm];
   line 7238: dy[pv->index_pt_theta_cdm] += S_nuDM*pvecthermo[pth->index_th_dmu_nuDM]*(y[pv->index_pt_theta_ur]-Y[pv->index_pt_theta_cdm]);
+	  -> additional condition ppw->approx[ppw->index_ap_rsa] == (int)rsa_off
   line 7389: dy[pv->index_pt_theta_ur] += pvecthermo[pth->index_th_dmu_nuDM]*(y[pv->index_pt_theta_cdm]-y[pv->index_pt_theta_ur]);
   line 7401: dy[pv->index_pt_shear_ur] += -9./10.*pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_shear_ur];	
   line 7408: dy[pv->index_pt_l3_ur] -= pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_l3_ur];

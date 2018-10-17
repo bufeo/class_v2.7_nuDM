@@ -7234,7 +7234,7 @@ int perturb_derivs(double tau,
         dy[pv->index_pt_delta_cdm] = -(y[pv->index_pt_theta_cdm]+metric_continuity); /* cdm density */
 
         dy[pv->index_pt_theta_cdm] = - a_prime_over_a*y[pv->index_pt_theta_cdm] + metric_euler; /* cdm velocity */
-	if(pth->has_coupling_nuDM==_TRUE_)
+	if(pth->has_coupling_nuDM==_TRUE_ && ppw->approx[ppw->index_ap_rsa] == (int)rsa_off)
 	  dy[pv->index_pt_theta_cdm] += S_nuDM*pvecthermo[pth->index_th_dmu_nuDM]*(y[pv->index_pt_theta_ur]-y[pv->index_pt_theta_cdm]);
       }
 
