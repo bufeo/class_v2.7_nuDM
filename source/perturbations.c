@@ -221,7 +221,7 @@ int perturb_init(
 
     /** test that choices for nuDM interactions make sense */
   if(pth->has_coupling_nuDM==_TRUE_){
-    class_test((ppt->ppt->gauge =! newtonian),
+    class_test(ppt->gauge == synchronous,
 	       ppt->error_message,
 	       "nu-DM coupling only available with neutonian gauge");
 
@@ -6978,7 +6978,7 @@ int perturb_derivs(double tau,
   R = 4./3. * pvecback[pba->index_bg_rho_g]/pvecback[pba->index_bg_rho_b];
 
   /** background quantities for nu-DM interactions */
-  S_nuDM = S = 4./3. *pvecback[pba->index_bg_rho_ur]/pvecback[pba->index_bg_rho_cdm];
+  S_nuDM = 4./3.*pvecback[pba->index_bg_rho_ur]/pvecback[pba->index_bg_rho_cdm];
 
   /** - Compute 'generalised cotK function of argument \f$ \sqrt{|K|}*\tau \f$, for closing hierarchy.
       (see equation 2.34 in arXiv:1305.3261): */
@@ -7233,9 +7233,9 @@ int perturb_derivs(double tau,
       if (ppt->gauge == newtonian) {
         dy[pv->index_pt_delta_cdm] = -(y[pv->index_pt_theta_cdm]+metric_continuity); /* cdm density */
 
-        dy[pv->index_pt_theta_cdm] = - A_prime_over_a*y[pv->index_pt_theta_cdm] + metric_euler; /* cdm velocity */
+        dy[pv->index_pt_theta_cdm] = - a_prime_over_a*y[pv->index_pt_theta_cdm] + metric_euler; /* cdm velocity */
 	if(pth->has_coupling_nuDM==_TRUE_)
-	  dy[pv->index_pt_theta_cdm] += S_nuDM*pvecthermo[pth->index_th_dmu_nuDM]*(y[pv->index_pt_theta_ur]-y[pv->index_pt_theta_cdm])
+	  dy[pv->index_pt_theta_cdm] += S_nuDM*pvecthermo[pth->index_th_dmu_nuDM]*(y[pv->index_pt_theta_ur]-y[pv->index_pt_theta_cdm]);
       }
 
       /** - ----> synchronous gauge: cdm density only (velocity set to zero by definition of the gauge) */
@@ -7386,7 +7386,7 @@ int perturb_derivs(double tau,
           -(1.-ppt->three_ceff2_ur)*a_prime_over_a*y[pv->index_pt_theta_ur];
 
 	if(pth->has_coupling_nuDM==_TRUE_)
-	  dy[pv->index_pt_theta_ur] += pvecthermo[pth->index_pth_dmu_nuDM]*(y[pv->index_pt_theta_cdm]-y[pv->index_pt_theta_ur]);
+	  dy[pv->index_pt_theta_ur] += pvecthermo[pth->index_th_dmu_nuDM]*(y[pv->index_pt_theta_cdm]-y[pv->index_pt_theta_ur]);
 
         if(ppw->approx[ppw->index_ap_ufa] == (int)ufa_off) {
 
@@ -7398,18 +7398,18 @@ int perturb_derivs(double tau,
                  // non-standard term, non-zero if cvis2_ur not 1/3
                  -(1.-ppt->three_cvis2_ur)*(8./15.*(y[pv->index_pt_theta_ur]+metric_shear)));
 	  if(pth->has_coupling_nuDM==_TRUE_)
-	    dy[pv->index_pt_shear_ur] += -9./10.*pvecthermo[pth->index_dmu_nuDM]*y[pv->index_pt_shear_ur];
+	    dy[pv->index_pt_shear_ur] += -9./10.*pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_shear_ur];
 
           /** - -----> Exact ur l=3 */
           l = 3;
-          dy[pv->index_pt_l3_ur] = K/(2.*l+1.)*
+          dy[pv->index_pt_l3_ur] = k/(2.*l+1.)*
             (l*2.*s_l[l]*s_l[2]*y[pv->index_pt_shear_ur]-(l+1.)*s_l[l+1]*y[pv->index_pt_l3_ur+1]);
 	  if(pth->has_coupling_nuDM==_TRUE_)
 	    dy[pv->index_pt_l3_ur] -= pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_l3_ur];
 
           /** - -----> Exactc ur l>3 */
           for (l = 4; l < pv->l_max_ur; l++) {
-            dy[pv->index_pt_delta_ur+l] = K/(2.*l+1)*
+            dy[pv->index_pt_delta_ur+l] = k/(2.*l+1)*
               (l*s_l[l]*y[pv->index_pt_delta_ur+l-1]-(l+1.)*s_l[l+1]*y[pv->index_pt_delta_ur+l+1]);
 	    if(pth->has_coupling_nuDM==_TRUE_)
 	      dy[pv->index_pt_delta_ur+l] -= pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_delta_ur+l];
