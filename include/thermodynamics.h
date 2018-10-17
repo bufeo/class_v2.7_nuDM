@@ -151,6 +151,9 @@ struct thermo
   double annihilation_f_halo; /** takes the contribution of DM annihilation in halos into account*/
   double annihilation_z_halo; /** characteristic redshift for DM annihilation in halos*/
 
+  double u_nuDM;              /** DM-NU scattering cross section normalized to the Thomson cross
+				  section and a DM mass of 100 GeV */
+  short has_coupling_nuDM;   /** flag to indicate weather the scattering is present */
   //@}
 
   /** @name - all indices for the vector of thermodynamical (=th) quantities stored in table */
@@ -172,6 +175,7 @@ struct thermo
   int index_th_ddcb2;         /**< second derivative wrt conformal time of squared baryon sound speed  \f$ d^2 [c_b^2] / d \tau^2 \f$ (only computed if some non0-minimal tight-coupling schemes is requested) */
   int index_th_rate;          /**< maximum variation rate of \f$ exp^{-\kappa}\f$, g and \f$ (d g / d \tau) \f$, used for computing integration step in perturbation module */
   int index_th_r_d;           /**< simple analytic approximation to the photon comoving damping scale */
+  int index_th_dmu_nDM;       /**< rate for DM-neutrino scattering */
   int th_size;                /**< size of thermodynamics vector */
 
   //@}
