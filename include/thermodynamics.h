@@ -175,7 +175,7 @@ struct thermo
   int index_th_ddcb2;         /**< second derivative wrt conformal time of squared baryon sound speed  \f$ d^2 [c_b^2] / d \tau^2 \f$ (only computed if some non0-minimal tight-coupling schemes is requested) */
   int index_th_rate;          /**< maximum variation rate of \f$ exp^{-\kappa}\f$, g and \f$ (d g / d \tau) \f$, used for computing integration step in perturbation module */
   int index_th_r_d;           /**< simple analytic approximation to the photon comoving damping scale */
-  int index_th_dmu_nDM;       /**< rate for DM-neutrino scattering */
+  int index_th_dmu_nuDM;       /**< rate for DM-neutrino scattering */
   int th_size;                /**< size of thermodynamics vector */
 
   //@}

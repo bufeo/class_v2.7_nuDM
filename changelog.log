@@ -37,5 +37,5 @@
 	 -> only if has_coupling_nuDM is TRUE
 
 * in function 'thermodynamics_indices'
-  line 952: asign index to pth->index_dmu_nuDM
+  line 952: asign index to pth->index_th_dmu_nuDM
 	 -> only if has_coupling_nuDM is TRUE

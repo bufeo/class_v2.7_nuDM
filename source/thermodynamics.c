@@ -375,6 +375,15 @@ int thermodynamics_init(
              pth->error_message,
              "CDM decay effects require the presence of CDM!");
 
+  /* test nuDM scattering parameters */
+  class_test((pth->u_nuDM<0.),
+	     pth->error_message,
+	     "DM-nu coupling strength can't be smaller than zero!");
+
+  class_test((pth->has_coupling_nuDM==_TRUE_)&&(pba->K!=0),
+	     pth->error_message,
+	     "DM-nu coupling not implemented with non-flat curvature");
+
   /* tests in order to prevent segmentation fault in the following */
   class_test(_not4_ == 0.,
              pth->error_message,
@@ -622,7 +631,7 @@ int thermodynamics_init(
   /* compute dmu_nuDM */
   if(pth->has_coupling_nuDM==_TRUE_){
     for (index_tau=0; index_tau < pth->tt_size; index_tau++) {
-      pth->thermodynamics_table[index_tau*pth->th_size+pth->index_th_dmu_nDM] = 3./8./_PI_/_G_*(pth->z_table[index_tau]+1.)*(pth->z_table[index_tau]+1.)*pba->Omega0_cdm*pba->H0*pba->H0*pth->u_nuDM*pow(_c_,4)*_sigma_/1.e11/_eV_/_Mpc_over_m_;
+      pth->thermodynamics_table[index_tau*pth->th_size+pth->index_th_dmu_nuDM] = 3./8./_PI_/_G_*(pth->z_table[index_tau]+1.)*(pth->z_table[index_tau]+1.)*pba->Omega0_cdm*pba->H0*pba->H0*pth->u_nuDM*pow(_c_,4)*_sigma_/1.e11/_eV_/_Mpc_over_m_;
     }
   }
 
@@ -936,6 +945,11 @@ int thermodynamics_indices(
 
   if (pth->compute_damping_scale == _TRUE_) {
     pth->index_th_r_d = index;
+    index++;
+  }
+
+  if(pth->has_coupling_nuDM==_TRUE_){
+    pth->index_th_dmu_nuDM = index;
     index++;
   }
 
