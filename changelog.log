@@ -39,3 +39,22 @@
 * in function 'thermodynamics_indices'
   line 952: asign index to pth->index_th_dmu_nuDM
 	 -> only if has_coupling_nuDM is TRUE
+
+
+4. 'perturbations.c'
+----------------------------------------
+* in function 'perturb_init'
+  line 223: test that nuDM coupling is only implemented with newtonian gauge
+
+* in function 'perturb_derivs'
+  line 6918: double S_nuDM
+  -> the following commands are executed only if pth->has_coupling_nuDM is TRUE
+  line 6983: S_nuDM = S = 4./3. *pvecback[pba->index_bg_rho_ur]/pvecback[pba->index_bg_rho_cdm];
+  line 7238: dy[pv->index_pt_theta_cdm] += S_nuDM*pvecthermo[pth->index_th_dmu_nuDM]*(y[pv->index_pt_theta_ur]-Y[pv->index_pt_theta_cdm])
+  line 7389: dy[pv->index_pt_theta_ur] += pvecthermo[pth->index_pth_dmu_nuDM]*(y[pv->index_pt_theta_cdm]-y[pv->index_pt_theta_ur]);
+  line 7402: dy[pv->index_pt_shear_ur] += -9./10.*pvecthermo[pth->index_dmu_nuDM]*y[pv->index_pt_shear_ur];	
+  line 7408: dy[pv->index_pt_l3_ur] -= pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_l3_ur];
+  line 7415: dy[pv->index_pt_delta_ur+l] -= pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_delta_ur+l];
+  line 7423: dy[pv->index_pt_delta_ur+l] -= pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_delta_ur+l];
+	  -> truncation equation for l_max
+  line 7450: UFA equation (CLASS scheme): NO MODIFICATIONS!xs
