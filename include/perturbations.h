@@ -99,6 +99,9 @@ struct perturbs
    *  parameters and the content of the 'precision', 'background' and
    *  'thermodynamics' structures) */
 
+  /* for the use with neutrino-DM interactions: list of higher order coefficients */
+  double * alpha_nuDM;
+
   //@{
 
   short has_perturbations; /**< do we need to compute perturbations at all ? */
@@ -446,7 +449,6 @@ struct perturb_vector
   int * used_in_sources; /**< boolean array specifying which
                             perturbations enter in the calculation of
                             source functions */
-
 };
 
 

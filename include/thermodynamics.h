@@ -151,8 +151,8 @@ struct thermo
   double annihilation_f_halo; /** takes the contribution of DM annihilation in halos into account*/
   double annihilation_z_halo; /** characteristic redshift for DM annihilation in halos*/
 
-  double u_nuDM;              /** DM-NU scattering cross section normalized to the Thomson cross
-				  section and a DM mass of 100 GeV */
+  double u_nuDM_0;            /** DM-NU scattering cross section normalized to the Thomson crosssection and a DM mass of 100 GeV at T=T_0 */
+  double n_nuDM;             /** temperature dependance of the cross section: sigma ~ T^n_nuDM*/
   short has_coupling_nuDM;   /** flag to indicate weather the scattering is present */
   //@}
 

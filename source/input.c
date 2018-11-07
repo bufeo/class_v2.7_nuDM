@@ -491,6 +491,17 @@ int input_init(
     }
   }
 
+  if(pth->has_coupling_nuDM==_TRUE_){
+    printf(" -> Neutrino-Dark Matter coupling enabled with the following parameters:\n");
+    printf("     u_nuDM_0 = %f\n", pth->u_nuDM_0);
+    printf("       n_nuDM = %f\n", pth->n_nuDM);
+    printf("     l_max_ur = %d\n", ppr->l_max_ur);
+    printf("   ufa_triggr = %f\n", ppr->ur_fluid_trigger_tau_over_tau_k);
+    printf("   alpha_nuDM = ");
+    for (i=0; i<ppr->l_max_ur; i++)
+      printf("%f, ", ppt->alpha_nuDM[i]);
+    printf("\n");    
+  }
   return _SUCCESS_;
 
 }
@@ -1294,9 +1305,11 @@ int input_read_parameters(
     }
   }
   /** parameters for DM-nu scattering */
-  class_read_double("u_nuDM", pth->u_nuDM);
-  if (pth->u_nuDM>0.)
+  class_read_double("u_nuDM_0", pth->u_nuDM_0);
+  if (pth->u_nuDM_0>0.){
     pth->has_coupling_nuDM = _TRUE_;
+    class_read_double("n_nuDM", pth->n_nuDM)
+  }
   
 
   /** (c) define which perturbations and sources should be computed, and down to which scale */
@@ -2663,6 +2676,35 @@ int input_read_parameters(
   class_read_int("l_max_pol_g",ppr->l_max_pol_g);
   class_read_int("l_max_dr",ppr->l_max_dr);
   class_read_int("l_max_ur",ppr->l_max_ur);
+
+  /** this is a bit special: if nu-DM scattering is enabled initialize the list of hihger-order
+      multipole coefficients, set default to 1 and read in vaues */
+  if (pth->has_coupling_nuDM==_TRUE_)
+    {
+      double * read_alpha;
+      parser_read_list_of_doubles(pfc,
+				  "alpha_nuDM",
+				  &entries_read,
+				  &(read_alpha),
+				  &flag2,
+				  errmsg);
+      class_alloc(ppt->alpha_nuDM,
+		  ppr->l_max_ur*sizeof(double),
+		  errmsg);
+      if(flag2==_TRUE_){
+	for(i=0; i<entries_read; i++)
+	  ppt->alpha_nuDM[i] = read_alpha[i];
+	for(i=entries_read; i<ppr->l_max_ur; i++)
+	  ppt->alpha_nuDM[i] = read_alpha[entries_read-1];
+      }
+      else{
+	for(i=0; i<ppr->l_max_ur; i++)
+	  ppt->alpha_nuDM[i] = 1.;
+      }
+      free(read_alpha);
+    }
+  /** end of the nu-DM section */
+      
   if (pba->N_ncdm>0)
     class_read_int("l_max_ncdm",ppr->l_max_ncdm);
   class_read_int("l_max_g_ten",ppr->l_max_g_ten);
@@ -3023,7 +3065,8 @@ int input_default_params(
 
   pth->compute_damping_scale = _FALSE_;
 
-  pth->u_nuDM=0.;
+  pth->u_nuDM_0=0.;
+  pth->n_nuDM=0.;
   pth->has_coupling_nuDM=_FALSE_;
 
   /** - perturbation structure */

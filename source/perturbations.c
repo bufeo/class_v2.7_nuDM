@@ -7398,21 +7398,21 @@ int perturb_derivs(double tau,
                  // non-standard term, non-zero if cvis2_ur not 1/3
                  -(1.-ppt->three_cvis2_ur)*(8./15.*(y[pv->index_pt_theta_ur]+metric_shear)));
 	  if(pth->has_coupling_nuDM==_TRUE_)
-	    dy[pv->index_pt_shear_ur] += -9./10.*pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_shear_ur];
+	    dy[pv->index_pt_shear_ur] += -0.5*ppt->alpha_nuDM[2]*pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_shear_ur];
 
           /** - -----> Exact ur l=3 */
           l = 3;
           dy[pv->index_pt_l3_ur] = k/(2.*l+1.)*
             (l*2.*s_l[l]*s_l[2]*y[pv->index_pt_shear_ur]-(l+1.)*s_l[l+1]*y[pv->index_pt_l3_ur+1]);
 	  if(pth->has_coupling_nuDM==_TRUE_)
-	    dy[pv->index_pt_l3_ur] -= pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_l3_ur];
+	    dy[pv->index_pt_l3_ur] -= ppt->alpha_nuDM[l]*pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_l3_ur];
 
           /** - -----> Exactc ur l>3 */
           for (l = 4; l < pv->l_max_ur; l++) {
             dy[pv->index_pt_delta_ur+l] = k/(2.*l+1)*
               (l*s_l[l]*y[pv->index_pt_delta_ur+l-1]-(l+1.)*s_l[l+1]*y[pv->index_pt_delta_ur+l+1]);
 	    if(pth->has_coupling_nuDM==_TRUE_)
-	      dy[pv->index_pt_delta_ur+l] -= pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_delta_ur+l];
+	      dy[pv->index_pt_delta_ur+l] -= ppt->alpha_nuDM[l]*pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_delta_ur+l];
 	  }
 
           /** - -----> Exact ur lmax_ur */
@@ -7420,7 +7420,7 @@ int perturb_derivs(double tau,
           dy[pv->index_pt_delta_ur+l] =
             k*(s_l[l]*y[pv->index_pt_delta_ur+l-1]-(1.+l)*cotKgen*y[pv->index_pt_delta_ur+l]);
 	  if(pth->has_coupling_nuDM==_TRUE_)
-	    dy[pv->index_pt_delta_ur+l] -= pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_delta_ur+l];
+	    dy[pv->index_pt_delta_ur+l] -= ppt->alpha_nuDM[l]*pvecthermo[pth->index_th_dmu_nuDM]*y[pv->index_pt_delta_ur+l];
         }
 
         else {

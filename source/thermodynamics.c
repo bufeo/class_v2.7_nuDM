@@ -153,10 +153,10 @@ int thermodynamics_at_z(
     pvecthermo[pth->index_th_ddg]=0.;
 
     /* calculate the rate for DM-neutrino scattering */
-    /* dmu_nuDM = 3/(8*Pi*G)*sigma_th/10^11eV*c^4/Mpc_over_m*(1+z)^2*u_nuDM*Omega_DM*H_0^2 */
+    /* dmu_nuDM = 3/(8*Pi*G)*sigma_th/10^11eV*c^4/Mpc_over_m*(1+z)^(2+n_nuDM)*u_nuDM_0*Omega_DM*H_0^2 */
     /* actually this expression is exact */
     if (pth->has_coupling_nuDM==_TRUE_)
-      pvecthermo[pth->index_th_dmu_nuDM] = (1.+z)*(1.+z)*pth->u_nuDM*3.*pba->H0*pba->H0/8./_PI_/_G_*pba->Omega0_cdm*pow(_c_,4)*_sigma_/1.e11/_eV_/_Mpc_over_m_; 
+      pvecthermo[pth->index_th_dmu_nuDM] = pow(1.+z, 2.+pth->n_nuDM)*pth->u_nuDM_0*3.*pba->H0*pba->H0/8./_PI_/_G_*pba->Omega0_cdm*pow(_c_,4)*_sigma_/1.e11/_eV_/_Mpc_over_m_; 
 
     /* Calculate Tb */
     pvecthermo[pth->index_th_Tb] = pba->T_cmb*(1.+z);
@@ -376,7 +376,7 @@ int thermodynamics_init(
              "CDM decay effects require the presence of CDM!");
 
   /* test nuDM scattering parameters */
-  class_test((pth->u_nuDM<0.),
+  class_test((pth->u_nuDM_0<0.),
 	     pth->error_message,
 	     "DM-nu coupling strength can't be smaller than zero!");
 
@@ -631,7 +631,9 @@ int thermodynamics_init(
   /* compute dmu_nuDM */
   if(pth->has_coupling_nuDM==_TRUE_){
     for (index_tau=0; index_tau < pth->tt_size; index_tau++) {
-      pth->thermodynamics_table[index_tau*pth->th_size+pth->index_th_dmu_nuDM] = 3./8./_PI_/_G_*(pth->z_table[index_tau]+1.)*(pth->z_table[index_tau]+1.)*pba->Omega0_cdm*pba->H0*pba->H0*pth->u_nuDM*pow(_c_,4)*_sigma_/1.e11/_eV_/_Mpc_over_m_;
+      pth->thermodynamics_table[index_tau*pth->th_size+pth->index_th_dmu_nuDM]
+	= 3./8./_PI_/_G_*pow(pth->z_table[index_tau]+1.,2.+pth->n_nuDM)*pba->Omega0_cdm*pba->H0*pba->H0*pth->u_nuDM_0
+	*pow(_c_,4)*_sigma_/1.e11/_eV_/_Mpc_over_m_;
     }
   }
 
