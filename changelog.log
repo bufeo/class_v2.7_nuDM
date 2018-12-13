@@ -45,7 +45,8 @@
 * in function input_read_parameters
   line 1309: class_read_double("u_nuDM_0", pth->u_nuDM_0)
 	  -> read strength of neutrino-DM cooupling
-  line 1311: if the coupling strength is greater than 0 set flag has_coupling_nuDM to TRUE
+  line 1311: if the coupling strength is greater than 0 set flag 
+             has_coupling_nuDM to TRUE
   line 1312: if the coupling strength is greater than 0 read n_nuDM
   line 2682: if has_coupling_nuDM is TRUE create array for multipole coefficients
   line 2684: read in alpha_nuDM from the input file
@@ -85,6 +86,13 @@
   line 953: asign index to pth->index_th_dmu_nuDM
 	 -> only if has_coupling_nuDM is TRUE
 
+* in function 'thermodynamics_output_titles'
+  line 3723: add a column for DM-neutrino scattering rate
+             class_store_columntitle(titles, "dmu_nuDM [Mpc^-1]", pth->has_coupling_nuDM);
+
+* in function 'thermodynamics_output_data'
+  line 3770: write DM-nu scattering rate to file
+             class_store_double(dataptr,pvecthermo[pth->index_th_dmu_nuDM],pth->has_coupling_nuDM,storeidx);
 
 4. 'perturbations.c'
 ----------------------------------------
@@ -94,7 +102,8 @@
 * in function 'perturb_derivs'
   line 6918: double S_nuDM
   -> the following commands are executed only if pth->has_coupling_nuDM is TRUE
-  line 6983: S_nuDM = 4./3.*pvecback[pba->index_bg_rho_ur]/pvecback[pba->index_bg_rho_cdm];
+  line 6983: S_nuDM = 4./3.*pvecback[pba->index_bg_rho_ur]
+             /pvecback[pba->index_bg_rho_cdm];
   line 7238: if ppw->approx[ppw->index_ap_rsa] == (int)rsa_off
 	     dy[pv->index_pt_theta_cdm] += S_nuDM*pvecthermo[pth->index_th_dmu_nuDM]
 	     *(y[pv->index_pt_theta_ur]- y[pv->index_pt_theta_cdm]);

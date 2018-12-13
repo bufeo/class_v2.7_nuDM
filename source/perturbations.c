@@ -7451,7 +7451,6 @@ int perturb_derivs(double tau,
             dy[pv->index_pt_shear_ur] =
               -3./tau*y[pv->index_pt_shear_ur]
               +2./3.*(y[pv->index_pt_theta_ur]+metric_ufa_class);
-
           }
         }
       }

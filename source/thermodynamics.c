@@ -3720,6 +3720,7 @@ int thermodynamics_output_titles(struct background * pba,
   class_store_columntitle(titles,"kappa' [Mpc^-1]",_TRUE_);
   //class_store_columntitle(titles,"kappa''",_TRUE_);
   //class_store_columntitle(titles,"kappa'''",_TRUE_);
+  class_store_columntitle(titles, "dmu_nuDM [Mpc^-1]", pth->has_coupling_nuDM);
   class_store_columntitle(titles,"exp(-kappa)",_TRUE_);
   class_store_columntitle(titles,"g [Mpc^-1]",_TRUE_);
   //class_store_columntitle(titles,"g'",_TRUE_);
@@ -3766,6 +3767,7 @@ int thermodynamics_output_data(struct background * pba,
     class_store_double(dataptr,tau,_TRUE_,storeidx);
     class_store_double(dataptr,pvecthermo[pth->index_th_xe],_TRUE_,storeidx);
     class_store_double(dataptr,pvecthermo[pth->index_th_dkappa],_TRUE_,storeidx);
+    class_store_double(dataptr,pvecthermo[pth->index_th_dmu_nuDM],pth->has_coupling_nuDM,storeidx);
     //class_store_double(dataptr,pvecthermo[pth->index_th_ddkappa],_TRUE_,storeidx);
     //class_store_double(dataptr,pvecthermo[pth->index_th_dddkappa],_TRUE_,storeidx);
     class_store_double(dataptr,pvecthermo[pth->index_th_exp_m_kappa],_TRUE_,storeidx);
