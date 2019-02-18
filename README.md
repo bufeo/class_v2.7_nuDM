@@ -7,8 +7,10 @@ with several major inputs from other people, especially Benjamin
 Audren, Simon Prunet, Jesus Torrado, Miguel Zumalacarregui, Francesco
 Montanari, etc.
 
-For download and information, see http://class-code.net
+with modifications to account for dark matter-neutrino scattering by Julia Stadler.
 
+For download and information on the original code, see http://class-code.net
+For all changes made to the code to account for DM-neutrino interactions consider changelog.log
 
 Compiling CLASS and getting started
 -----------------------------------
@@ -107,6 +109,8 @@ Using the code
 
 You can use CLASS freely, provided that in your publications, you cite
 at least the paper `CLASS II: Approximation schemes <http://arxiv.org/abs/1104.2933>`. Feel free to cite more CLASS papers!
+
+For this modified version of CLASS please also cite <>
 
 Support
 -------
