@@ -7,10 +7,11 @@ with several major inputs from other people, especially Benjamin
 Audren, Simon Prunet, Jesus Torrado, Miguel Zumalacarregui, Francesco
 Montanari, etc.
 
-with modifications to account for dark matter-neutrino scattering by Julia Stadler.
+With modifications to account for dark matter-neutrino scattering by Julia Stadler.
 
 For download and information on the original code, see http://class-code.net
-For all changes made to the code to account for DM-neutrino interactions consider changelog.log
+
+For all changes made to the code to account for DM-neutrino interactions consider the changelog.log file.
 
 Compiling CLASS and getting started
 -----------------------------------

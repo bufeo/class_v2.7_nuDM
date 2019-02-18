@@ -1,22 +1,22 @@
           CHANGES TO CLASS v2.7          
 -----------------------------------------
-* this file lists all changes on order to incorporate DM-neutrino scattering
+* This file lists all changes on order to incorporate DM-neutrino scattering
   into CLASS
-* This file lists all changes w.r.t the class_public version, downloaded 2/10/10
-* the commit this code is based on is
+* The code is based on the public CLASS version, downloaded 2/10/10
   ----------
   commit 4be2cb31bb87a5c90d8ae5277ae22252a4732676
   Merge: de7d9d7 55a99c6
   Author: lesgourg <lesgourg@physik.rwth-aachen.de>
   Date:   Mon Sep 10 18:06:10 2018 +0200
   ----------
+* For more details see REFERENCE
 
 1. 'thermodynamics.h'
 ----------------------------------------
 * in struct thermo: add new parameters
   line 154: double u_nuDM_0
 	 -> interaction cross section normalizedt to a DM mass of 100 GeV,
-	    and the Thomson scattering rate at current time
+	    and the Thomson scattering cross section
   line 155: double n_nuDM;
 	 -> temperature dependence of the DM-neutrino scattering cross section
 	    sigma_nuDM ~ T^n_nuDM
