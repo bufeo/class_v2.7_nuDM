@@ -111,7 +111,7 @@ Using the code
 You can use CLASS freely, provided that in your publications, you cite
 at least the paper `CLASS II: Approximation schemes <http://arxiv.org/abs/1104.2933>`. Feel free to cite more CLASS papers!
 
-For this modified version of CLASS please also cite <>
+For this modified version of CLASS please also cite <https://arxiv.org/abs/1903.00540>
 
 Support
 -------
