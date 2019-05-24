@@ -500,7 +500,12 @@ int input_init(
     printf("   alpha_nuDM = ");
     for (i=0; i<ppr->l_max_ur; i++)
       printf("%f, ", ppt->alpha_nuDM[i]);
-    printf("\n");    
+    printf("\n");
+    printf("has_nuDM_initially = %d\n", ppr->has_nuDM_initially);
+    if (ppr->has_nuDM_initially == _TRUE_){
+      printf("small k threshold = %f\n", ppr->start_small_k_at_dmu_nuDM_over_aH);
+      printf("large k threshold = %f\n", ppr->start_large_k_at_aH_over_dmu_nuDM);
+      }
   }
   return _SUCCESS_;
 
@@ -1308,7 +1313,12 @@ int input_read_parameters(
   class_read_double("u_nuDM_0", pth->u_nuDM_0);
   if (pth->u_nuDM_0>0.){
     pth->has_coupling_nuDM = _TRUE_;
-    class_read_double("n_nuDM", pth->n_nuDM)
+    class_read_double("n_nuDM", pth->n_nuDM);
+    class_read_int("has_nuDM_initially", ppr->has_nuDM_initially);
+      if(ppr->has_nuDM_initially){
+	class_read_double("start_small_k_at_dmu_nuDM_over_aH", ppr->start_small_k_at_dmu_nuDM_over_aH);
+	class_read_double("start_large_k_at_aH_over_dmu_nuDM", ppr->start_large_k_at_aH_over_dmu_nuDM);
+      }
   }
   
 
@@ -3393,6 +3403,11 @@ int input_default_precision ( struct precision * ppr ) {
   ppr->tight_coupling_trigger_tau_c_over_tau_k=0.01; /* decrease to switch off earlier in time */
   ppr->start_sources_at_tau_c_over_tau_h = 0.008; /* decrease to start earlier in time */
   ppr->tight_coupling_approximation=(int)compromise_CLASS;
+
+  /** parameters for nuDM initial conditions **/
+  ppr->has_nuDM_initially=_TRUE_;
+  ppr->start_small_k_at_dmu_nuDM_over_aH=1.;
+  ppr->start_large_k_at_aH_over_dmu_nuDM=1.;
 
   ppr->l_max_g=12;
   ppr->l_max_pol_g=10;
