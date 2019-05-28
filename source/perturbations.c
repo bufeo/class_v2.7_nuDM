@@ -2249,10 +2249,10 @@ int perturb_solve(
     }
   }
 
+
   /** check if we have to impose a condition on (aH/kappa_nuDM) **/
-  account_for_nuDM_interactions == _FALSE_;
-  if(pth->has_coupling_nuDM==_TRUE_ && ppr->has_nuDM_initially==_TRUE_){
-    printf('in nuDM ini condition');
+  account_for_nuDM_interactions = _FALSE_;
+  if(pth->has_coupling_nuDM == _TRUE_ && ppr->has_nuDM_initially == _TRUE_){
     if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/
        ppw->pvecback[pba->index_bg_a]/
        ppw->pvecback[pba->index_bg_H]
@@ -2260,7 +2260,7 @@ int perturb_solve(
       account_for_nuDM_interactions = _TRUE_;
   }
 
-  if(account_for_nuDM_interactions = _TRUE_){
+  if(account_for_nuDM_interactions == _TRUE_){
       class_test(ppw->pvecback[pba->index_bg_a]*
              ppw->pvecback[pba->index_bg_H]/
              ppw->pvecthermo[pth->index_th_dmu_nuDM] > ppr->start_large_k_at_aH_over_dmu_nuDM,
@@ -2303,6 +2303,8 @@ int perturb_solve(
 	 ppw->pvecback[pba->index_bg_a]
 	 < ppr->start_small_k_at_dmu_nuDM_over_aH)
 	account_for_nuDM_interactions = _FALSE_;
+      else
+	account_for_nuDM_interactions = _TRUE_;
     }
 
     /* check if integration starts early enough for nuDM initial conditions */
@@ -4245,7 +4247,7 @@ int perturb_initial_conditions(struct precision * ppr,
 		 pth->error_message,
 		 ppt->error_message);
 
-      if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/a_prime_over_a < ppr->start_small_k_at_dmu_nuDM_over_aH)
+      if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/a_prime_over_a > ppr->start_small_k_at_dmu_nuDM_over_aH)
 	account_for_nuDM_interactions = _TRUE_;
     }
 //////////////////////////////////////////////////
