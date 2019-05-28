@@ -2249,26 +2249,20 @@ int perturb_solve(
     }
   }
 
-
-  /** check if we have to impose a condition on (aH/kappa_nuDM) **/
-  account_for_nuDM_interactions = _FALSE_;
-  if(pth->has_coupling_nuDM == _TRUE_ && ppr->has_nuDM_initially == _TRUE_){
-    if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/
-       ppw->pvecback[pba->index_bg_a]/
-       ppw->pvecback[pba->index_bg_H]
-       > ppr->start_small_k_at_dmu_nuDM_over_aH)
-      account_for_nuDM_interactions = _TRUE_;
+//////////////////////////////////////////////////
+  /** check if initial time is okay given given imposed
+      conditions on aH/dmu_nuDM **/
+  if(pth->has_coupling_nuDM == _TRUE_ && ppr->has_nuDM_initially == _TRUE_ && account_for_nuDM_interactions == _TRUE_){
+    class_test(ppw->pvecback[pba->index_bg_a]*
+	       ppw->pvecback[pba->index_bg_H]/
+	       ppw->pvecthermo[pth->index_th_dmu_nuDM] > ppr->start_large_k_at_aH_over_dmu_nuDM,
+	       ppt->error_message, "your choice of initial time for integrating wavenumbers is inappropriate: it corresponds to a time before that at which the background has been integrated. You should increase 'start_large_k_at_aH_over_dmu_nuDM' up to at least %g, or decrease 'a_ini_over_a_today_default'\n",
+	       ppw->pvecback[pba->index_bg_a]*
+	       ppw->pvecback[pba->index_bg_H]/
+	       ppw->pvecthermo[pth->index_th_dmu_nuDM]);
   }
+//////////////////////////////////////////////////
 
-  if(account_for_nuDM_interactions == _TRUE_){
-      class_test(ppw->pvecback[pba->index_bg_a]*
-             ppw->pvecback[pba->index_bg_H]/
-             ppw->pvecthermo[pth->index_th_dmu_nuDM] > ppr->start_large_k_at_aH_over_dmu_nuDM,
-	     ppt->error_message, "your choice of initial time for integrating wavenumbers is inappropriate: it corresponds to a time before that at which the background has been integrated. You should increase 'start_large_k_at_aH_over_dmu_nuDM' up to at least %g, or decrease 'a_ini_over_a_today_default'\n",
-		 ppw->pvecback[pba->index_bg_a]*
-		 ppw->pvecback[pba->index_bg_H]/
-		 ppw->pvecthermo[pth->index_th_dmu_nuDM]);
-  }
   /* is at most the time at which sources must be sampled */
   tau_upper = ppt->tau_sampling[0];
 
@@ -2296,14 +2290,13 @@ int perturb_solve(
       }
     }
 
+//////////////////////////////////////////////////    
     /* check if the neutrino interactions need to be taken into account */
+    account_for_nuDM_interactions = _FALSE_;
     if(pth->has_coupling_nuDM==_TRUE_ && ppr->has_nuDM_initially==_TRUE_){
       if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/
 	 ppw->pvecback[pba->index_bg_H]/
-	 ppw->pvecback[pba->index_bg_a]
-	 < ppr->start_small_k_at_dmu_nuDM_over_aH)
-	account_for_nuDM_interactions = _FALSE_;
-      else
+	 ppw->pvecback[pba->index_bg_a] > ppr->start_small_k_at_dmu_nuDM_over_aH)
 	account_for_nuDM_interactions = _TRUE_;
     }
 
@@ -2315,7 +2308,7 @@ int perturb_solve(
 	 > ppr->start_large_k_at_aH_over_dmu_nuDM)
 	is_early_enough = _FALSE_;
     }
-    
+//////////////////////////////////////////////////    
 
     /* also check that the two conditions on (aH/kappa') and (aH/k) are fulfilled */
     if (is_early_enough == _TRUE_) {
@@ -4135,7 +4128,10 @@ int perturb_initial_conditions(struct precision * ppr,
   double velocity_tot;
   double s2_squared;
 
+//////////////////////////////////////////////////  
   int account_for_nuDM_interactions;
+  int nuDM_thermo_index;
+//////////////////////////////////////////////////
 
   /** --> For scalars */
 
@@ -4241,13 +4237,14 @@ int perturb_initial_conditions(struct precision * ppr,
 				     pth,
 				     1./ppw->pvecback[pba->index_bg_a]-1.,  /* redshift z=1/a-1 */
 				     pth->inter_normal,
-				     &(ppw->last_index_thermo),
+				     &nuDM_thermo_index,
 				     ppw->pvecback,
 				     ppw->pvecthermo),
 		 pth->error_message,
 		 ppt->error_message);
 
-      if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/a_prime_over_a > ppr->start_small_k_at_dmu_nuDM_over_aH)
+      if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/
+	 a_prime_over_a > ppr->start_small_k_at_dmu_nuDM_over_aH)
 	account_for_nuDM_interactions = _TRUE_;
     }
 //////////////////////////////////////////////////
