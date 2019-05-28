@@ -493,18 +493,19 @@ int input_init(
 
   if(pth->has_coupling_nuDM==_TRUE_){
     printf(" -> Neutrino-Dark Matter coupling enabled with the following parameters:\n");
-    printf("     u_nuDM_0 = %f\n", pth->u_nuDM_0);
-    printf("       n_nuDM = %f\n", pth->n_nuDM);
-    printf("     l_max_ur = %d\n", ppr->l_max_ur);
-    printf("   ufa_triggr = %f\n", ppr->ur_fluid_trigger_tau_over_tau_k);
-    printf("   alpha_nuDM = ");
+    printf("    u_nuDM_0 = %f\n", pth->u_nuDM_0);
+    printf("    n_nuDM = %f\n", pth->n_nuDM);
+    printf("    l_max_ur = %d\n", ppr->l_max_ur);
+    printf("    ufa_triggr = %f\n", ppr->ur_fluid_trigger_tau_over_tau_k);
+    printf("    alpha_nuDM = ");
     for (i=0; i<ppr->l_max_ur; i++)
-      printf("%f, ", ppt->alpha_nuDM[i]);
-    printf("\n");
-    printf("has_nuDM_initially = %d\n", ppr->has_nuDM_initially);
+      if (i<3 || ppt->alpha_nuDM[i] !=ppt->alpha_nuDM[i])
+	printf("%f, ", ppt->alpha_nuDM[i]);
+    printf("...\n");
+    printf("    has_nuDM_initially = %d\n", ppr->has_nuDM_initially);
     if (ppr->has_nuDM_initially == _TRUE_){
-      printf("small k threshold = %f\n", ppr->start_small_k_at_dmu_nuDM_over_aH);
-      printf("large k threshold = %f\n", ppr->start_large_k_at_aH_over_dmu_nuDM);
+      printf("    small k threshold = %f\n", ppr->start_small_k_at_dmu_nuDM_over_aH);
+      printf("    large k threshold = %f\n", ppr->start_large_k_at_aH_over_dmu_nuDM);
       }
   }
   return _SUCCESS_;

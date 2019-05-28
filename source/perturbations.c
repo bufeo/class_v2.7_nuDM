@@ -2252,6 +2252,7 @@ int perturb_solve(
   /** check if we have to impose a condition on (aH/kappa_nuDM) **/
   account_for_nuDM_interactions == _FALSE_;
   if(pth->has_coupling_nuDM==_TRUE_ && ppr->has_nuDM_initially==_TRUE_){
+    printf('in nuDM ini condition');
     if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/
        ppw->pvecback[pba->index_bg_a]/
        ppw->pvecback[pba->index_bg_H]
