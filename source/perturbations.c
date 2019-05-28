@@ -2290,26 +2290,6 @@ int perturb_solve(
       }
     }
 
-//////////////////////////////////////////////////    
-    /* check if the neutrino interactions need to be taken into account */
-    account_for_nuDM_interactions = _FALSE_;
-    if(pth->has_coupling_nuDM==_TRUE_ && ppr->has_nuDM_initially==_TRUE_){
-      if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/
-	 ppw->pvecback[pba->index_bg_H]/
-	 ppw->pvecback[pba->index_bg_a] > ppr->start_small_k_at_dmu_nuDM_over_aH)
-	account_for_nuDM_interactions = _TRUE_;
-    }
-
-    /* check if integration starts early enough for nuDM initial conditions */
-    if(account_for_nuDM_interactions == _TRUE_){
-      if(ppw->pvecback[pba->index_bg_H]*
-	 ppw->pvecback[pba->index_bg_a]/
-	 ppw->pvecthermo[pth->index_th_dmu_nuDM]
-	 > ppr->start_large_k_at_aH_over_dmu_nuDM)
-	is_early_enough = _FALSE_;
-    }
-//////////////////////////////////////////////////    
-
     /* also check that the two conditions on (aH/kappa') and (aH/k) are fulfilled */
     if (is_early_enough == _TRUE_) {
 
@@ -2331,6 +2311,27 @@ int perturb_solve(
            ppr->start_large_k_at_tau_h_over_tau_k))
 
         is_early_enough = _FALSE_;
+
+//////////////////////////////////////////////////    
+      /* check if the neutrino interactions need to be taken into account */
+      account_for_nuDM_interactions = _FALSE_;
+      if(pth->has_coupling_nuDM==_TRUE_ && ppr->has_nuDM_initially==_TRUE_){
+	if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/
+	   ppw->pvecback[pba->index_bg_H]/
+	   ppw->pvecback[pba->index_bg_a] > ppr->start_small_k_at_dmu_nuDM_over_aH)
+	  account_for_nuDM_interactions = _TRUE_;
+      }
+
+      /* check if integration starts early enough for nuDM initial conditions */
+      if(account_for_nuDM_interactions == _TRUE_){
+	if(ppw->pvecback[pba->index_bg_H]*
+	   ppw->pvecback[pba->index_bg_a]/
+	   ppw->pvecthermo[pth->index_th_dmu_nuDM]
+	   > ppr->start_large_k_at_aH_over_dmu_nuDM)
+	  is_early_enough = _FALSE_;
+      }
+//////////////////////////////////////////////////    
+
     }
 
     if (is_early_enough == _TRUE_)
@@ -4231,7 +4232,7 @@ int perturb_initial_conditions(struct precision * ppr,
     /* If neutrinos interact with dark matter this supresses their shear and changes the initial
        conditions.Here we check if we have to take this into account */
     account_for_nuDM_interactions = _FALSE_;
-    if (pth->has_coupling_nuDM && ppr->has_nuDM_initially){
+    if (pth->has_coupling_nuDM == _TRUE_ && ppr->has_nuDM_initially == _TRUE_){
       
       class_call(thermodynamics_at_z(pba,
 				     pth,
@@ -4243,8 +4244,7 @@ int perturb_initial_conditions(struct precision * ppr,
 		 pth->error_message,
 		 ppt->error_message);
 
-      if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/
-	 a_prime_over_a > ppr->start_small_k_at_dmu_nuDM_over_aH)
+      if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/a_prime_over_a > ppr->start_small_k_at_dmu_nuDM_over_aH)
 	account_for_nuDM_interactions = _TRUE_;
     }
 //////////////////////////////////////////////////
