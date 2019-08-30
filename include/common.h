@@ -525,6 +525,11 @@ struct precision
 
   double start_large_k_at_tau_h_over_tau_k;  /**< largest wavelengths start being sampled when mode is sufficiently outside Hubble scale. This is quantified in terms of the ratio of hubble time scale to wavenumber time scale, \f$ \tau_h/\tau_k \f$ which is roughly equal to (k*tau). Start when this ratio equals start_large_k_at_tau_k_over_tau_h. Decrease this value to start integrating the wavenumbers earlier in time. */
 
+  /** if we have neutrino interactions we need three new precision parameters to controll how we set initial conditions **/
+  int has_nuDM_initially;
+  double start_small_k_at_dmu_nuDM_over_aH;
+  double start_large_k_at_aH_over_dmu_nuDM;
+
   /**
    * when to switch off tight-coupling approximation: first condition:
    * \f$ \tau_c/\tau_H \f$ > tight_coupling_trigger_tau_c_over_tau_h.

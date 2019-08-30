@@ -2158,7 +2158,7 @@ int perturb_solve(
   /* approximation scheme within previous interval: previous_approx[index_ap] */
   int * previous_approx;
 
-  int n_ncdm,is_early_enough;
+  int n_ncdm,is_early_enough,account_for_nuDM_interactions;
 
   /* function pointer to ODE evolver and names of possible evolvers */
 
@@ -2249,6 +2249,20 @@ int perturb_solve(
     }
   }
 
+//////////////////////////////////////////////////
+  /** check if initial time is okay given given imposed
+      conditions on aH/dmu_nuDM **/
+  if(pth->has_coupling_nuDM == _TRUE_ && ppr->has_nuDM_initially == _TRUE_ && account_for_nuDM_interactions == _TRUE_){
+    class_test(ppw->pvecback[pba->index_bg_a]*
+	       ppw->pvecback[pba->index_bg_H]/
+	       ppw->pvecthermo[pth->index_th_dmu_nuDM] > ppr->start_large_k_at_aH_over_dmu_nuDM,
+	       ppt->error_message, "your choice of initial time for integrating wavenumbers is inappropriate: it corresponds to a time before that at which the background has been integrated. You should increase 'start_large_k_at_aH_over_dmu_nuDM' up to at least %g, or decrease 'a_ini_over_a_today_default'\n",
+	       ppw->pvecback[pba->index_bg_a]*
+	       ppw->pvecback[pba->index_bg_H]/
+	       ppw->pvecthermo[pth->index_th_dmu_nuDM]);
+  }
+//////////////////////////////////////////////////
+
   /* is at most the time at which sources must be sampled */
   tau_upper = ppt->tau_sampling[0];
 
@@ -2297,6 +2311,27 @@ int perturb_solve(
            ppr->start_large_k_at_tau_h_over_tau_k))
 
         is_early_enough = _FALSE_;
+
+//////////////////////////////////////////////////    
+      /* check if the neutrino interactions need to be taken into account */
+      account_for_nuDM_interactions = _FALSE_;
+      if(pth->has_coupling_nuDM==_TRUE_ && ppr->has_nuDM_initially==_TRUE_){
+	if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/
+	   ppw->pvecback[pba->index_bg_H]/
+	   ppw->pvecback[pba->index_bg_a] > ppr->start_small_k_at_dmu_nuDM_over_aH)
+	  account_for_nuDM_interactions = _TRUE_;
+      }
+
+      /* check if integration starts early enough for nuDM initial conditions */
+      if(account_for_nuDM_interactions == _TRUE_){
+	if(ppw->pvecback[pba->index_bg_H]*
+	   ppw->pvecback[pba->index_bg_a]/
+	   ppw->pvecthermo[pth->index_th_dmu_nuDM]
+	   > ppr->start_large_k_at_aH_over_dmu_nuDM)
+	  is_early_enough = _FALSE_;
+      }
+//////////////////////////////////////////////////    
+
     }
 
     if (is_early_enough == _TRUE_)
@@ -3450,6 +3485,7 @@ int perturb_vector_init(
 
     class_call(perturb_initial_conditions(ppr,
                                           pba,
+					  pth,
                                           ppt,
                                           index_md,
                                           index_ic,
@@ -4066,6 +4102,7 @@ int perturb_vector_free(
 
 int perturb_initial_conditions(struct precision * ppr,
                                struct background * pba,
+			       struct thermo * pth,
                                struct perturbs * ppt,
                                int index_md,
                                int index_ic,
@@ -4091,6 +4128,11 @@ int perturb_initial_conditions(struct precision * ppr,
   double delta_tot;
   double velocity_tot;
   double s2_squared;
+
+//////////////////////////////////////////////////  
+  int account_for_nuDM_interactions;
+  int nuDM_thermo_index;
+//////////////////////////////////////////////////
 
   /** --> For scalars */
 
@@ -4186,6 +4228,27 @@ int perturb_initial_conditions(struct precision * ppr,
 
     s2_squared = 1.-3.*pba->K/k/k;
 
+//////////////////////////////////////////////////
+    /* If neutrinos interact with dark matter this supresses their shear and changes the initial
+       conditions.Here we check if we have to take this into account */
+    account_for_nuDM_interactions = _FALSE_;
+    if (pth->has_coupling_nuDM == _TRUE_ && ppr->has_nuDM_initially == _TRUE_){
+      
+      class_call(thermodynamics_at_z(pba,
+				     pth,
+				     1./ppw->pvecback[pba->index_bg_a]-1.,  /* redshift z=1/a-1 */
+				     pth->inter_normal,
+				     &nuDM_thermo_index,
+				     ppw->pvecback,
+				     ppw->pvecthermo),
+		 pth->error_message,
+		 ppt->error_message);
+
+      if(ppw->pvecthermo[pth->index_th_dmu_nuDM]/a_prime_over_a > ppr->start_small_k_at_dmu_nuDM_over_aH)
+	account_for_nuDM_interactions = _TRUE_;
+    }
+//////////////////////////////////////////////////
+    
     /** - (b) starts by setting everything in synchronous gauge. If
         another gauge is needed, we will perform a gauge
         transformation below. */
@@ -4278,13 +4341,30 @@ int perturb_initial_conditions(struct precision * ppr,
 
         if (pba->has_dr == _TRUE_) delta_dr = delta_ur;
 
+//////////////////////////////////////////////////
+	if (account_for_nuDM_interactions == _TRUE_)
+	  {
+	    /* same as photon velocity */
+	    theta_ur = ppw->pv->y[ppw->pv->index_pt_theta_g];
+	    shear_ur = 0.;
+	      
+	    /* tighly-coupled dark matter */
+	    ppw->pv->y[ppw->pv->index_pt_theta_cdm] = theta_ur;
+	  }
+//////////////////////////////////////////////////
       }
 
       /* synchronous metric perturbation eta */
       //eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om)) /  s2_squared;
       //eta = ppr->curvature_ini * s2_squared * (1.-ktau_two/12./(15.+4.*fracnu)*(15.*s2_squared-10.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
       eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
-
+//////////////////////////////////////////////////
+      if (account_for_nuDM_interactions == _TRUE_){
+	/* ToDo: this is only the lowest order expression as in Ma/Bertschinger
+	   Obtain higher order corrections. */
+	eta = 1 - 0.5/18.*ktau_two;
+      }
+//////////////////////////////////////////////////
     }
 
     /* isocurvature initial conditions taken from Bucher, Moodely,
@@ -4424,7 +4504,7 @@ int perturb_initial_conditions(struct precision * ppr,
     if (ppt->gauge == newtonian) {
 
       /* alpha is like in Ma & Bertschinger: (h'+6 eta')/(2k^2). We obtain it from the first two Einstein equations:
-
+	 
          alpha = [eta + 3/2 (a'/a)^2 (delta_rho/rho_c) / k^2 /s_2^2 + 3/2 (a'/a)^3 3 ((rho+p)theta/rho_c) / k^4 / s_2^2] / (a'/a)
          = [eta + 3/2 (a'/a)^2 / k^2 /s_2^2 {delta_tot + 3 (a'/a) /k^2 velocity_tot}] / (a'/a)
 
